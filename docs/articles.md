@@ -1,6 +1,6 @@
 # 参考文献
 
-This includes useful articles for those wanting to run a meetup or promote Gutenberg.
+<!-- This includes useful articles for those wanting to run a meetup or promote Gutenberg. -->
 グーテンベルクのミートアップの運営やプロモートをしたい方の役に立つ文献です。
 
 ## グーテンベルクの概説

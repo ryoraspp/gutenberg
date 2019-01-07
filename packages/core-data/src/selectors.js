@@ -208,7 +208,7 @@ export function canUser( state, action, resource, id ) {
  * null if there is no autosave for the post.
  *
  * @param {Object} state         State tree.
- * @param {Object} post          The post that is parent to the autosave.
+ * @param {Object} post          The parent post of the autosave.
  * @param {string} attributeName Autosave attribute name.
  *
  * @return {*} Autosave attribute value.
@@ -228,7 +228,7 @@ export function getAutosaveAttribute( state, post, attributeName ) {
  * Returns the autosave associated with the provided postId.
  *
  * @param {Object} state State tree.
- * @param {Object} post  The post that is parent to the autosave.
+ * @param {Object} post  The parent post of the autosave.
  *
  * @return {?Object} The autosave object, if it exists.
  */
@@ -242,10 +242,22 @@ export function getAutosave( state, post ) {
  * Returns the true if there is an autosave for the given post id, otherwise false.
  *
  * @param {Object} state State tree.
- * @param {Object} post  The post that is parent to the autosave.
+ * @param {Object} post  The parent post of the autosave.
  *
  * @return {boolean} Whether there is an existing autosave.
  */
 export function hasAutosave( state, post ) {
 	return !! getAutosave( state, post );
 }
+
+/**
+ * Returns true if the REST request for an autosave has completed.
+ *
+ * @param {*} state State tree.
+ * @param {*} post  The parent post of the autosave.
+ *
+ * @return {boolean} True if the REST request was completed. False otherwise.
+ */
+export const hasFetchedAutosave = createRegistrySelector( ( select ) => ( state, post ) => {
+	return select( 'core/data' ).hasFinishedResolution( REDUCER_KEY, 'getAutosave', [ post ] );
+} );

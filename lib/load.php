@@ -67,4 +67,3 @@ if ( ! function_exists( 'render_block_core_tag_cloud' ) ) {
 if ( ! function_exists( 'render_block_core_search' ) ) {
 	require dirname( __FILE__ ) . '/../packages/block-library/src/search/index.php';
 }
-}

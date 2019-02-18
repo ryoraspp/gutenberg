@@ -57,9 +57,9 @@ class WidgetEditHandler extends Component {
 			<div
 				className="wp-block-legacy-widget__edit-container"
 				// Display none is used because when we switch from edit to preview,
-				// we don't want to unmounted component.
-				// Otherwise when we went back to edit again we wound need to trigger again
-				// all widgets events and some scripts may not deal well with this.
+				// we don't want to unmount the component.
+				// Otherwise when we went back to edit we wound need to trigger
+				// all widgets events again and some scripts may not deal well with this.
 				style={ {
 					display: this.props.isVisible ? 'block' : 'none',
 				} }

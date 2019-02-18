@@ -42,35 +42,65 @@ class LegacyWidgetEdit extends Component {
 	}
 
 	render() {
-		const { attributes, availableLegacyWidgets, setAttributes } = this.props;
+		const {
+			attributes,
+			availableLegacyWidgets,
+			hasPermissionsToManageWidgets,
+			setAttributes,
+		} = this.props;
 		const { isPreview } = this.state;
 		const { identifier } = attributes;
 		const widgetObject = identifier && availableLegacyWidgets[ identifier ];
 		if ( ! widgetObject ) {
+			let placeholderContent;
+			if ( ! hasPermissionsToManageWidgets ) {
+				placeholderContent = __( 'You don\'t have permissions to use widgets on this site.' );
+			} else if ( availableLegacyWidgets.length === 0 ) {
+				placeholderContent = __( 'There are no widgets available.' );
+			} else {
+				placeholderContent = ( <SelectControl
+					label={ __( 'Select a legacy widget to display:' ) }
+					value={ identifier || 'none' }
+					onChange={ ( value ) => setAttributes( {
+						instance: {},
+						identifier: value,
+					} ) }
+					options={ [ { value: 'none', label: 'Select widget' } ].concat(
+						map( availableLegacyWidgets, ( widget, key ) => {
+							return {
+								value: key,
+								label: widget.name,
+							};
+						} )
+					) }
+				/> );
+			}
 			return (
 				<Placeholder
 					icon={ <BlockIcon icon="admin-customizer" /> }
 					label={ __( 'Legacy Widget' ) }
 				>
-					<SelectControl
-						label={ __( 'Select a legacy widget to display:' ) }
-						value={ identifier || 'none' }
-						onChange={ ( value ) => setAttributes( {
-							instance: {},
-							identifier: value,
-						} ) }
-						options={ [ { value: 'none', label: 'Select widget' } ].concat(
-							map( availableLegacyWidgets, ( widget, key ) => {
-								return {
-									value: key,
-									label: widget.name,
-								};
-							} )
-						) }
-					/>
+					{ placeholderContent }
 				</Placeholder>
 			);
 		}
+
+		const inspectorControls = (
+			<InspectorControls>
+				<PanelBody title={ widgetObject.name }>
+					{ widgetObject.description }
+				</PanelBody>
+			</InspectorControls>
+		);
+		if ( ! hasPermissionsToManageWidgets ) {
+			return (
+				<Fragment>
+					{ inspectorControls }
+					{ this.renderWidgetPreview() }
+				</Fragment>
+			);
+		}
+
 		return (
 			<Fragment>
 				<BlockControls>
@@ -95,11 +125,7 @@ class LegacyWidgetEdit extends Component {
 						</Button>
 					</Toolbar>
 				</BlockControls>
-				<InspectorControls>
-					<PanelBody title={ widgetObject.name }>
-						{ widgetObject.description }
-					</PanelBody>
-				</InspectorControls>
+				{ inspectorControls }
 				<WidgetEditHandler
 					isVisible={ ! isPreview }
 					identifier={ attributes.identifier }
@@ -112,13 +138,7 @@ class LegacyWidgetEdit extends Component {
 						}
 					}
 				/>
-				{ isPreview && (
-					<ServerSideRender
-						className="wp-block-legacy-widget__preview"
-						block="core/legacy-widget"
-						attributes={ attributes }
-					/>
-				) }
+				{ isPreview && this.renderWidgetPreview() }
 			</Fragment>
 		);
 	}
@@ -138,12 +158,27 @@ class LegacyWidgetEdit extends Component {
 	switchToPreview() {
 		this.setState( { isPreview: true } );
 	}
+
+	renderWidgetPreview() {
+		const { attributes } = this.props;
+		return (
+			<ServerSideRender
+				className="wp-block-legacy-widget__preview"
+				block="core/legacy-widget"
+				attributes={ attributes }
+			/>
+		);
+	}
 }
 
 export default withSelect( ( select ) => {
 	const editorSettings = select( 'core/editor' ).getEditorSettings();
-	const { availableLegacyWidgets } = editorSettings;
+	const {
+		availableLegacyWidgets,
+		hasPermissionsToManageWidgets,
+	} = editorSettings;
 	return {
+		hasPermissionsToManageWidgets,
 		availableLegacyWidgets,
 	};
 } )( LegacyWidgetEdit );

@@ -23,6 +23,7 @@ export const PREFERENCES_DEFAULTS = {
  */
 export const EDITOR_SETTINGS_DEFAULTS = {
 	availableLegacyWidgets: {},
+	hasPermissionsToManageWidgets: false,
 	alignWide: false,
 	colors: [
 		{

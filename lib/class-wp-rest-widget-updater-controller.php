@@ -3,13 +3,13 @@
  * Widget Updater REST API: WP_REST_Widget_Updater_Controller class
  *
  * @package gutenberg
- * @since 4.9.0
+ * @since 5.2.0
  */
 
 /**
  * Controller which provides REST endpoint for updating a widget.
  *
- * @since 2.8.0
+ * @since 5.2.0
  *
  * @see WP_REST_Controller
  */
@@ -44,6 +44,7 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 					),
 					array(
 						'methods'  => WP_REST_Server::EDITABLE,
+						'permission_callback' => array( $this, 'compute_new_widget_permissions_check' ),
 						'callback' => array( $this, 'compute_new_widget' ),
 					),
 				)
@@ -51,9 +52,32 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Checks if the user has permissions to make the request.
+	 *
+	 * @since 5.2.0
+	 * @access public
+	 *
+	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+	 */
+	public function compute_new_widget_permissions_check() {
+		// Verify if the current user has edit_theme_options capability.
+		// This capability is required to access the widgets screen.
+		if ( ! current_user_can( 'edit_theme_options' ) ) {
+			return new WP_Error(
+				'widgets_cannot_access',
+				__( 'Sorry, you are not allowed to access widgets on this site.' ),
+				array(
+					'status' => rest_authorization_required_code(),
+				)
+			);
+		}
+		return true;
+	}
+
+	/**
 	 * Returns the new widget instance and the form that represents it.
 	 *
-	 * @since 2.8.0
+	 * @since 5.2.0
 	 * @access public
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
@@ -66,14 +90,21 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 
 		global $wp_widget_factory;
 
-		if ( null === $widget || ! isset( $wp_widget_factory->widgets[ $widget ] ) ) {
-			return;
+		if (
+			null === $widget ||
+			! isset( $wp_widget_factory->widgets[ $widget ] ) ||
+			! ( $wp_widget_factory->widgets[ $widget ] instanceof WP_Widget )
+		) {
+			return new WP_Error(
+				'widget_invalid',
+				__( 'Invalid widget.' ),
+				array(
+					'status' => 404,
+				)
+			);
 		}
 
 		$widget_obj = $wp_widget_factory->widgets[ $widget ];
-		if ( ! ( $widget_obj instanceof WP_Widget ) ) {
-			return;
-		}
 
 		$instance = $request->get_param( 'instance' );
 		if ( null === $instance ) {
@@ -97,7 +128,7 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 			 * Returning false will effectively short-circuit the widget's ability
 			 * to update settings. The old setting will be returned.
 			 *
-			 * @since 2.8.0
+			 * @since 5.2.0
 			 *
 			 * @param array     $instance         The current widget instance's settings.
 			 * @param array     $instance_changes Array of new widget settings.
@@ -126,7 +157,7 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 			 * Note: If the widget has no form, the text echoed from the default
 			 * form method can be hidden using CSS.
 			 *
-			 * @since 2.8.0
+			 * @since 5.2.0
 			 *
 			 * @param WP_Widget $widget_obj     The widget instance (passed by reference).
 			 * @param null      $return   Return null if new fields are added.

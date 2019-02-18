@@ -1138,9 +1138,9 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		);
 	}
 
+	$has_permissions_to_manage_widgets = current_user_can( 'edit_theme_options' );
 	$available_legacy_widgets = array();
 	global $wp_widget_factory;
-
 	foreach ( $wp_widget_factory->widgets as $class => $widget_obj ) {
 		$available_legacy_widgets[ $class ] = array(
 			'name'        => html_entity_decode( $widget_obj->name ),
@@ -1149,26 +1149,27 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	}
 
 	$editor_settings = array(
-		'alignWide'              => $align_wide || ! empty( $gutenberg_theme_support[0]['wide-images'] ), // Backcompat. Use `align-wide` outside of `gutenberg` array.
-		'availableTemplates'     => $available_templates,
-		'availableLegacyWidgets' => $available_legacy_widgets,
-		'allowedBlockTypes'      => $allowed_block_types,
-		'disableCustomColors'    => get_theme_support( 'disable-custom-colors' ),
-		'disableCustomFontSizes' => get_theme_support( 'disable-custom-font-sizes' ),
-		'disablePostFormats'     => ! current_theme_supports( 'post-formats' ),
-		'titlePlaceholder'       => apply_filters( 'enter_title_here', __( 'Add title', 'gutenberg' ), $post ),
-		'bodyPlaceholder'        => apply_filters( 'write_your_story', __( 'Start writing or type / to choose a block', 'gutenberg' ), $post ),
-		'isRTL'                  => is_rtl(),
-		'autosaveInterval'       => 10,
-		'maxUploadFileSize'      => $max_upload_size,
-		'allowedMimeTypes'       => get_allowed_mime_types(),
-		'styles'                 => $styles,
-		'imageSizes'             => gutenberg_get_available_image_sizes(),
-		'richEditingEnabled'     => user_can_richedit(),
+		'alignWide'                     => $align_wide || ! empty( $gutenberg_theme_support[0]['wide-images'] ), // Backcompat. Use `align-wide` outside of `gutenberg` array.
+		'availableTemplates'            => $available_templates,
+		'hasPermissionsToManageWidgets' => $has_permissions_to_manage_widgets,
+		'availableLegacyWidgets'        => $available_legacy_widgets,
+		'allowedBlockTypes'             => $allowed_block_types,
+		'disableCustomColors'           => get_theme_support( 'disable-custom-colors' ),
+		'disableCustomFontSizes'        => get_theme_support( 'disable-custom-font-sizes' ),
+		'disablePostFormats'            => ! current_theme_supports( 'post-formats' ),
+		'titlePlaceholder'              => apply_filters( 'enter_title_here', __( 'Add title', 'gutenberg' ), $post ),
+		'bodyPlaceholder'               => apply_filters( 'write_your_story', __( 'Start writing or type / to choose a block', 'gutenberg' ), $post ),
+		'isRTL'                         => is_rtl(),
+		'autosaveInterval'              => 10,
+		'maxUploadFileSize'             => $max_upload_size,
+		'allowedMimeTypes'              => get_allowed_mime_types(),
+		'styles'                        => $styles,
+		'imageSizes'                    => gutenberg_get_available_image_sizes(),
+		'richEditingEnabled'            => user_can_richedit(),
 
 		// Ideally, we'd remove this and rely on a REST API endpoint.
-		'postLock'               => $lock_details,
-		'postLockUtils'          => array(
+		'postLock'                      => $lock_details,
+		'postLockUtils'                 => array(
 			'nonce'       => wp_create_nonce( 'lock-post_' . $post->ID ),
 			'unlockNonce' => wp_create_nonce( 'update-post_' . $post->ID ),
 			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),

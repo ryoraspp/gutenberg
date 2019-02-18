@@ -1138,21 +1138,43 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		);
 	}
 
+	/**
+	 * Start: Include for phase 2
+	 */
+
+	/**
+	 * Todo: The hardcoded array should be replaced with a mechanisms that allows core blocks
+	 * and third party blocks to specify they already have equivalent blocks, and maybe even allow them
+	 * to have a migration function.
+	 */
+	$core_widgets = array( 'WP_Widget_Pages', 'WP_Widget_Calendar', 'WP_Widget_Archives', 'WP_Widget_Media_Audio', 'WP_Widget_Media_Image', 'WP_Widget_Media_Gallery', 'WP_Widget_Media_Video', 'WP_Widget_Meta', 'WP_Widget_Search', 'WP_Widget_Text', 'WP_Widget_Categories', 'WP_Widget_Recent_Posts', 'WP_Widget_Recent_Comments', 'WP_Widget_RSS', 'WP_Widget_Tag_Cloud', 'WP_Nav_Menu_Widget', 'WP_Widget_Custom_HTML' );
+
 	$has_permissions_to_manage_widgets = current_user_can( 'edit_theme_options' );
-	$available_legacy_widgets = array();
+	$available_legacy_widgets          = array();
 	global $wp_widget_factory;
 	foreach ( $wp_widget_factory->widgets as $class => $widget_obj ) {
-		$available_legacy_widgets[ $class ] = array(
-			'name'        => html_entity_decode( $widget_obj->name ),
-			'description' => html_entity_decode( $widget_obj->widget_options['description'] ),
-		);
+		if ( ! in_array( $class, $core_widgets ) ) {
+			$available_legacy_widgets[ $class ] = array(
+				'name'        => html_entity_decode( $widget_obj->name ),
+				'description' => html_entity_decode( $widget_obj->widget_options['description'] ),
+			);
+		}
 	}
+	/**
+	 * End: Include for phase 2
+	 */
 
 	$editor_settings = array(
 		'alignWide'                     => $align_wide || ! empty( $gutenberg_theme_support[0]['wide-images'] ), // Backcompat. Use `align-wide` outside of `gutenberg` array.
 		'availableTemplates'            => $available_templates,
+		/**
+		* Start: Include for phase 2
+		*/
 		'hasPermissionsToManageWidgets' => $has_permissions_to_manage_widgets,
 		'availableLegacyWidgets'        => $available_legacy_widgets,
+		/**
+		* End: Include for phase 2
+		*/
 		'allowedBlockTypes'             => $allowed_block_types,
 		'disableCustomColors'           => get_theme_support( 'disable-custom-colors' ),
 		'disableCustomFontSizes'        => get_theme_support( 'disable-custom-font-sizes' ),

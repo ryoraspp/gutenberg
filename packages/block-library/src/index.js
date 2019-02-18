@@ -86,7 +86,7 @@ export const registerCoreBlocks = () => {
 		mediaText,
 		latestComments,
 		latestPosts,
-		legacyWidget,
+		process.env.GUTENBERG_PHASE === 2 ? legacyWidget : null,
 		missing,
 		more,
 		nextpage,

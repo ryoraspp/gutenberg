@@ -12,7 +12,7 @@ import edit from './edit';
 export const name = 'core/legacy-widget';
 
 export const settings = {
-	title: __( 'Legacy Widget' ),
+	title: __( 'Legacy Widget (Experimental)' ),
 
 	description: __( 'Display a legacy widget.' ),
 

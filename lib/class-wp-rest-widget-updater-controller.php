@@ -1,5 +1,6 @@
 <?php
 /**
+ * Start: Include for phase 2
  * Widget Updater REST API: WP_REST_Widget_Updater_Controller class
  *
  * @package gutenberg
@@ -180,3 +181,6 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 		);
 	}
 }
+/**
+ * End: Include for phase 2
+ */

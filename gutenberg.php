@@ -46,6 +46,9 @@ function the_gutenberg_project() {
 			<?php the_block_editor_meta_boxes(); ?>
 		</div>
 		<?php
+		/**
+		 * Start: Include for phase 2
+		 */
 		/** This action is documented in wp-admin/admin-footer.php */
 		// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		do_action( 'admin_print_footer_scripts-widgets.php' );
@@ -53,6 +56,9 @@ function the_gutenberg_project() {
 		/** This action is documented in wp-admin/admin-footer.php */
 		// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		do_action( 'admin_footer-widgets.php' );
+		/**
+		 * End: Include for phase 2
+		 */
 		?>
 	</div>
 	<?php
@@ -222,10 +228,16 @@ function gutenberg_init( $return, $post ) {
 	 */
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 
+	/**
+	 * Start: Include for phase 2
+	 */
 	// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 	do_action( 'admin_print_styles-widgets.php' );
 	// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 	do_action( 'admin_print_scripts-widgets.php' );
+	/**
+	 * End: Include for phase 2
+	 */
 
 	/*
 	 * Ensure meta box functions are available to third-party code;

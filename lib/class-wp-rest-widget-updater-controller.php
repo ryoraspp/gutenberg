@@ -44,9 +44,9 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 						),
 					),
 					array(
-						'methods'  => WP_REST_Server::EDITABLE,
+						'methods'             => WP_REST_Server::EDITABLE,
 						'permission_callback' => array( $this, 'compute_new_widget_permissions_check' ),
-						'callback' => array( $this, 'compute_new_widget' ),
+						'callback'            => array( $this, 'compute_new_widget' ),
 					),
 				)
 			);
@@ -66,7 +66,7 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			return new WP_Error(
 				'widgets_cannot_access',
-				__( 'Sorry, you are not allowed to access widgets on this site.' ),
+				__( 'Sorry, you are not allowed to access widgets on this site.', 'gutenberg' ),
 				array(
 					'status' => rest_authorization_required_code(),
 				)
@@ -98,7 +98,7 @@ class WP_REST_Widget_Updater_Controller extends WP_REST_Controller {
 		) {
 			return new WP_Error(
 				'widget_invalid',
-				__( 'Invalid widget.' ),
+				__( 'Invalid widget.', 'gutenberg' ),
 				array(
 					'status' => 404,
 				)

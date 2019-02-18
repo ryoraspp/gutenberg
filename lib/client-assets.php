@@ -1199,7 +1199,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 
 		// Whether or not to load the 'postcustom' meta box is stored as a user meta
 		// field so that we're not always loading its assets.
-		'enableCustomFields'     => (bool) get_user_meta( get_current_user_id(), 'enable_custom_fields', true ),
+		'enableCustomFields'            => (bool) get_user_meta( get_current_user_id(), 'enable_custom_fields', true ),
 	);
 
 	$post_autosave = gutenberg_get_autosave_newer_than_post_save( $post );

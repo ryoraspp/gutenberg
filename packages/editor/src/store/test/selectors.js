@@ -43,7 +43,7 @@ const {
 	isCurrentPostScheduled,
 	isEditedPostPublishable,
 	isEditedPostSaveable,
-	isEditedPostAutosaveable,
+	isEditedPostAutosaveable: isEditedPostAutosaveableRegistrySelector,
 	isEditedPostEmpty,
 	isEditedPostBeingScheduled,
 	isEditedPostDateFloating,
@@ -1307,6 +1307,11 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isEditedPostAutosaveable', () => {
+		// isEditedPostAutosaveable is only implemented as a registry selector
+		// to handle a deprecation. None of the tests here trigger the deprecation,
+		// so create the selector without passing it a registry.
+		const isEditedPostAutosaveable = isEditedPostAutosaveableRegistrySelector();
+
 		it( 'should return false if the post is not saveable', () => {
 			const autosave = {
 				title: 'sassel',

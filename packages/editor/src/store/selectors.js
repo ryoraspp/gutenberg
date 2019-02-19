@@ -522,6 +522,8 @@ export const isEditedPostAutosaveable = createRegistrySelector( ( select ) => fu
 	if ( arguments.length === 1 ) {
 		// Note: if this deprecation is removed, the selector can also be
 		// reverted to a normal selector instead of a registry selector.
+		// Unit tests will also need to be updated to reflect the removal
+		// of the registry selector.
 		deprecated( '`wp.data.select( \'core/editor\' ).isEditedPostAutosaveable()`', {
 			alternative: '`wp.data.select( \'core/editor\' ).isEditedPostAutosaveable( autosave )`',
 			plugin: 'Gutenberg',

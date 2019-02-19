@@ -35,7 +35,6 @@ Create a RichText value from an `Element` tree (DOM), an HTML string or a plain 
 toHTMLString( {
 	value: Object,
 	?multilineTag: string,
-	?multilineWrapperTags: Array,
 } ): string
 ```
 
@@ -47,7 +46,7 @@ Create an HTML string from a Rich Text value. If a `multilineTag` is provided, t
 apply( {
 	value: Object,
 	current: Element,
-	?multilineTag: string
+	?multilineTag: string,
 	?multilineWrapperTags: Array,
 } ): void
 ```

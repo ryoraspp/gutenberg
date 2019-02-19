@@ -168,7 +168,6 @@ export function toDom( {
 			formats: prepareFormats( prepareEditableTree, value ),
 		},
 		multilineTag,
-		multilineWrapperTags,
 		createEmpty,
 		append,
 		getLastChild,

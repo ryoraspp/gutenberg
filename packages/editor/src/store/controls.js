@@ -20,6 +20,15 @@ export function select( reducerKey, selectorName, ...args ) {
 	};
 }
 
+export function resolveSelect( reducerKey, selectorName, ...args ) {
+	return {
+		type: 'RESOLVE_SELECT',
+		reducerKey,
+		selectorName,
+		args,
+	};
+}
+
 export function dispatch( reducerKey, actionName, ...args ) {
 	return {
 		type: 'DISPATCH',
@@ -41,6 +50,29 @@ export default {
 	DISPATCH: createRegistryControl(
 		( registry ) => ( { reducerKey, actionName, args } ) => {
 			return registry.dispatch( reducerKey )[ actionName ]( ...args );
+		}
+	),
+	RESOLVE_SELECT: createRegistryControl(
+		( registry ) => ( { reducerKey, selectorName, args } ) => {
+			return new Promise( ( resolve ) => {
+				const hasFinished = () => registry.select( 'core/data' )
+					.hasFinishedResolution( reducerKey, selectorName, args );
+				const getResult = () => registry.select( reducerKey )[ selectorName ]
+					.apply( null, args );
+
+				// trigger the selector (to trigger the resolver)
+				const result = getResult();
+				if ( hasFinished() ) {
+					return resolve( result );
+				}
+
+				const unsubscribe = registry.subscribe( () => {
+					if ( hasFinished() ) {
+						unsubscribe();
+						resolve( getResult() );
+					}
+				} );
+			} );
 		}
 	),
 };

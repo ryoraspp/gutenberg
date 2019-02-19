@@ -18,12 +18,10 @@ module.exports = {
 				test: /.js$/,
 				exclude: /node_modules/,
 				use: [ {
-					loader: 'babel-loader',
+					loader: require.resolve( 'babel-loader' ),
 					options: {
-						plugins: [
-							[ '@babel/plugin-transform-react-jsx', {
-								pragma: 'wp.element.createElement',
-							} ],
+						presets: [
+							[ require.resolve( '@wordpress/babel-preset-default' ) ],
 						],
 					},
 				} ],

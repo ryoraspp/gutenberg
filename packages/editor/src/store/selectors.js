@@ -37,7 +37,7 @@ import {
 import { isInTheFuture, getDate } from '@wordpress/date';
 import { removep } from '@wordpress/autop';
 import { addQueryArgs } from '@wordpress/url';
-import { select } from '@wordpress/data';
+import { createRegistrySelector } from '@wordpress/data';
 import deprecated from '@wordpress/deprecated';
 
 /**
@@ -336,7 +336,7 @@ export function getEditedPostAttribute( state, attributeName ) {
  *
  * @return {*} Autosave attribute value.
  */
-export function getAutosaveAttribute( state, attributeName ) {
+export const getAutosaveAttribute = createRegistrySelector( ( select ) => ( state, attributeName ) => {
 	deprecated( '`wp.data.select( \'core/editor\' ).getAutosaveAttribute( attributeName )`', {
 		alternative: '`wp.data.select( \'core\' ).getAutosave( postType, postId )`',
 		plugin: 'Gutenberg',
@@ -348,13 +348,12 @@ export function getAutosaveAttribute( state, attributeName ) {
 
 	const postType = getCurrentPostType( state );
 	const postId = getCurrentPostId( state );
-
 	const autosave = select( 'core' ).getAutosave( postType, postId );
 
 	if ( autosave ) {
 		return getPostRawValue( autosave[ attributeName ] );
 	}
-}
+} );
 
 /**
  * Returns the current visibility of the post being edited, preferring the
@@ -519,8 +518,10 @@ export function isEditedPostEmpty( state ) {
  *
  * @return {boolean} Whether the post can be autosaved.
  */
-export function isEditedPostAutosaveable( state, autosave ) {
+export const isEditedPostAutosaveable = createRegistrySelector( ( select ) => function( state, autosave ) {
 	if ( arguments.length === 1 ) {
+		// Note: if this deprecation is removed, the selector can also be
+		// reverted to a normal selector instead of a registry selector.
 		deprecated( '`wp.data.select( \'core/editor\' ).isEditedPostAutosaveable()`', {
 			alternative: '`wp.data.select( \'core/editor\' ).isEditedPostAutosaveable( autosave )`',
 			plugin: 'Gutenberg',
@@ -553,7 +554,7 @@ export function isEditedPostAutosaveable( state, autosave ) {
 	return [ 'title', 'excerpt' ].some( ( field ) => (
 		getPostRawValue( autosave[ field ] ) !== getEditedPostAttribute( state, field )
 	) );
-}
+} );
 
 /**
  * Returns the current autosave, or null if one is not set (i.e. if the post
@@ -567,7 +568,7 @@ export function isEditedPostAutosaveable( state, autosave ) {
  *
  * @return {?Object} Current autosave, if exists.
  */
-export function getAutosave( state ) {
+export const getAutosave = createRegistrySelector( ( select ) => ( state ) => {
 	deprecated( '`wp.data.select( \'core/editor\' ).getAutosave()`', {
 		alternative: '`wp.data.select( \'core\' ).getAutosave( postType, postId )`',
 		plugin: 'Gutenberg',
@@ -577,7 +578,7 @@ export function getAutosave( state ) {
 	const postId = getCurrentPostId( state );
 	const autosave = select( 'core' ).getAutosave( postType, postId );
 	return mapValues( pick( autosave, AUTOSAVE_PROPERTIES ), getPostRawValue );
-}
+} );
 
 /**
  * Returns the true if there is an existing autosave, otherwise false.
@@ -589,7 +590,7 @@ export function getAutosave( state ) {
  *
  * @return {boolean} Whether there is an existing autosave.
  */
-export function hasAutosave( state ) {
+export const hasAutosave = createRegistrySelector( ( select ) => ( state ) => {
 	deprecated( '`wp.data.select( \'core/editor\' ).hasAutosave()`', {
 		alternative: '`!! wp.data.select( \'core\' ).getAutosave( postType, postId )`',
 		plugin: 'Gutenberg',
@@ -598,7 +599,7 @@ export function hasAutosave( state ) {
 	const postType = getCurrentPostType( state );
 	const postId = getCurrentPostId( state );
 	return !! select( 'core' ).getAutosave( postType, postId );
-}
+} );
 
 /**
  * Return true if the post being edited is being scheduled. Preferring the

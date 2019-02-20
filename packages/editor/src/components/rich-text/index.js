@@ -165,6 +165,7 @@ export class RichText extends Component {
 			multilineTag: this.multilineTag,
 			multilineWrapperTags: this.multilineWrapperTags,
 			prepareEditableTree: this.props.prepareEditableTree,
+			isEditableTree: true,
 		} );
 	}
 
